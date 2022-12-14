@@ -12,14 +12,14 @@ import {
 
 const formValidation = Yup.object({
   // title: Yup.string().trim().required('Required'),
-  // date: Yup.date().required('Required'),
+  // year: Yup.date().required('Required'),
   // genre: Yup.string().trim().required('Required'),
   // actors: Yup.string().trim().required('Required'),
 });
 
 function SearchForm({ getSearchedMovies }) {
   const formik = useFormik({
-    initialValues: { title: '', date: null, genre: '', actors: '' },
+    initialValues: { title: '', year: '', genre: '', actors: '' },
     validationSchema: formValidation,
     validateOnBlur: false,
     validateOnChange: false,
@@ -35,7 +35,7 @@ function SearchForm({ getSearchedMovies }) {
         alert('Fill in at least one field');
         return;
       }
-      getSearchedMovies(values.title);
+      getSearchedMovies(values);
     },
   });
 
@@ -51,12 +51,12 @@ function SearchForm({ getSearchedMovies }) {
           isInvalid={!!formik.touched.title && !!formik.errors.title}
           errorBorderColor="crimson"
         />
-        <NumberInput name="date" min={1900} max={2023}>
+        <NumberInput name="year" min={1900} max={2023}>
           <NumberInputField
             onChange={formik.handleChange}
-            value={formik.values.date}
+            value={formik.values.year}
             placeholder="Year of a movie..."
-            isInvalid={!!formik.touched.date && !!formik.errors.date}
+            isInvalid={!!formik.touched.year && !!formik.errors.year}
             errorBorderColor="crimson"
           />
           <NumberInputStepper style={{ height: '75%' }}>

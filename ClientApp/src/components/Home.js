@@ -14,56 +14,69 @@ const mainContainer = {
 const Home = () => {
   const { data, dispatch } = useDataCtx();
   const [page, setPage] = useState(1);
-  const [movieTitle, setMovieTitle] = useState('lego');
-  console.log(data);
+  const [searchData, setSearchData] = useState({
+    title: 'lego',
+    genre: '',
+    actors: '',
+    year: '',
+  });
 
-  const getSearchedMovies = async (term) => {
-    const moviesData = await getMoviesFetch(term, 1);
+  const getSearchedMovies = async (searchOptions) => {
+    const moviesData = await getMoviesFetch(searchOptions, 1);
     if (
       moviesData.response === 'False' &&
       moviesData.search === null &&
       moviesData.totalResults === null
     ) {
       alert('Movies not found');
+      return;
     }
-    // dispatch({
-    //   type: 'SET_MOVIES',
-    //   payload: { data: moviesData },
-    // });
-    // setMovieTitle(term);
-    // setPage(1);
+    dispatch({
+      type: 'SET_MOVIES',
+      payload: { data: moviesData },
+    });
+    setSearchData(searchOptions);
+    setPage(1);
   };
 
   const nextPage = async () => {
-    try {
-      const moviesData = await getMoviesFetch(movieTitle, page + 1);
-      if (
-        moviesData.response === 'False' &&
-        moviesData.search === null &&
-        moviesData.totalResults === null
-      ) {
-        alert('You have reached a total number of movies');
-        return;
+    if (
+      page * 10 > data.length - 1 &&
+      !searchData.genre &&
+      !searchData.actors &&
+      !searchData.year
+    ) {
+      try {
+        const moviesData = await getMoviesFetch(searchData, page + 1);
+        if (
+          moviesData.response === 'False' &&
+          moviesData.search === null &&
+          moviesData.totalResults === null
+        ) {
+          alert('You have reached a total number of movies');
+          return;
+        }
+        dispatch({
+          type: 'SET_MOVIES',
+          payload: { data: moviesData },
+        });
+      } catch (err) {
+        console.log(err);
       }
-      dispatch({
-        type: 'SET_MOVIES',
-        payload: { data: moviesData },
-      });
-      setPage((prev) => prev + 1);
-    } catch (err) {
-      console.log(err);
     }
+    if (
+      page * 10 > data.length - 1 &&
+      (searchData.genre || searchData.actors || searchData.year)
+    ) {
+      return;
+    }
+    setPage((prev) => prev + 1);
   };
 
   const prevPage = async () => {
     if (page - 1 < 1) {
       return;
     }
-    const moviesData = await getMoviesFetch(movieTitle, page - 1);
-    dispatch({
-      type: 'SET_MOVIES',
-      payload: { data: moviesData },
-    });
     setPage((prev) => prev - 1);
   };
 

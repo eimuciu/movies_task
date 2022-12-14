@@ -30,7 +30,10 @@ function DataProvider({ children }) {
 
   useEffect(() => {
     const downdata = async () => {
-      const dataresp = await getMoviesFetch('lego', 1);
+      const dataresp = await getMoviesFetch(
+        { title: 'lego', genre: '', actors: '', year: '' },
+        1,
+      );
       dispatch({
         type: 'SET_MOVIES',
         payload: { data: dataresp },
