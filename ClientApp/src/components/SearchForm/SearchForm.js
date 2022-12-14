@@ -2,13 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Input, Button } from '@chakra-ui/react';
 import css from './SearchForm.module.css';
-import {
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-} from '@chakra-ui/react';
+import { NumberInput, NumberInputField } from '@chakra-ui/react';
 
 const formValidation = Yup.object({
   // title: Yup.string().trim().required('Required'),
@@ -59,10 +53,6 @@ function SearchForm({ getSearchedMovies }) {
             isInvalid={!!formik.touched.year && !!formik.errors.year}
             errorBorderColor="crimson"
           />
-          <NumberInputStepper style={{ height: '75%' }}>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
         </NumberInput>
         <Input
           name="genre"
