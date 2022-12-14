@@ -1,14 +1,7 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Input, Button } from '@chakra-ui/react';
-import css from './SearchForm.module.css';
-import {
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-} from '@chakra-ui/react';
+import css from './EditForm.module.css';
 
 const formValidation = Yup.object({
   // title: Yup.string().trim().required('Required'),
@@ -17,25 +10,21 @@ const formValidation = Yup.object({
   // actors: Yup.string().trim().required('Required'),
 });
 
-function SearchForm({ getSearchedMovies }) {
+function EditForm({ movieObj, updateMovie, closeModal }) {
   const formik = useFormik({
-    initialValues: { title: '', date: null, genre: '', actors: '' },
+    enableReinitialize: false,
+    initialValues: {
+      title: movieObj.title,
+      date: movieObj.year,
+      genre: movieObj.genre,
+      actors: movieObj.actors,
+    },
     validationSchema: formValidation,
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: async (values) => {
-      let isFormEmpty = true;
-      for (const value of Object.keys(values)) {
-        if (values[value]) {
-          isFormEmpty = false;
-          break;
-        }
-      }
-      if (isFormEmpty) {
-        alert('Fill in at least one field');
-        return;
-      }
-      getSearchedMovies(values.title);
+    onSubmit: (values) => {
+      updateMovie({ ...movieObj, ...values });
+      closeModal();
     },
   });
 
@@ -51,19 +40,17 @@ function SearchForm({ getSearchedMovies }) {
           isInvalid={!!formik.touched.title && !!formik.errors.title}
           errorBorderColor="crimson"
         />
-        <NumberInput name="date" min={1900} max={2023}>
-          <NumberInputField
-            onChange={formik.handleChange}
-            value={formik.values.date}
-            placeholder="Year of a movie..."
-            isInvalid={!!formik.touched.date && !!formik.errors.date}
-            errorBorderColor="crimson"
-          />
-          <NumberInputStepper style={{ height: '75%' }}>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
+        <Input
+          name="date"
+          type="number"
+          min="1900"
+          max="2099"
+          step="1"
+          onChange={formik.handleChange}
+          value={formik.values.date}
+          isInvalid={!!formik.touched.date && !!formik.errors.date}
+          errorBorderColor="crimson"
+        />
         <Input
           name="genre"
           type="text"
@@ -82,11 +69,10 @@ function SearchForm({ getSearchedMovies }) {
           isInvalid={!!formik.touched.actors && !!formik.errors.actors}
           errorBorderColor="crimson"
         />
-
-        <Button type="submit">Find</Button>
+        <Button type="submit">Update</Button>
       </form>
     </>
   );
 }
 
-export default SearchForm;
+export default EditForm;

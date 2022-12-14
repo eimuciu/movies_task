@@ -31,6 +31,10 @@ public class MoviesController : ControllerBase
                 var result = await _httpClient.GetAsync($"http://www.omdbapi.com/?s={searchterm}&page={page}&apikey=e310bcb8");
                 result.EnsureSuccessStatusCode();
                 var content = await result.Content.ReadFromJsonAsync<MoviesResponseDto>();
+                if (content.Response == "False" && content.Search == null && content.TotalResults == null)
+                {
+                    return Ok(content);
+                }
 
                 // Saves data to local database
                 await _context.Movies.AddRangeAsync(content.Search);
@@ -42,9 +46,25 @@ public class MoviesController : ControllerBase
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return BadRequest("Something went wrong");
+                return Ok("Movie not found");
             }
         }
         return Ok(moviesFromDb);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<IEnumerable<Movies>>> UpdateMovie(Movies movieObj)
+    {
+
+        Movies movie = _context.Movies.Where(s => s.Id == movieObj.Id).FirstOrDefault();
+        if (movie == null) return BadRequest("Something went wrong");
+        movie.Title = movieObj.Title;
+        movie.Year = movieObj.Year;
+        movie.Genre = movieObj.Genre;
+        movie.Actors = movieObj.Actors;
+        await _context.SaveChangesAsync();
+
+        return Ok(movie);
+
     }
 }

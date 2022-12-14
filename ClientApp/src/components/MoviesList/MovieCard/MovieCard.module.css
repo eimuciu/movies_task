@@ -7,9 +7,17 @@
 }
 
 .textCont {
+  position: relative;
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
+}
+
+.editIcon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  cursor: pointer;
 }
 
 @media (max-width: 1023px) {

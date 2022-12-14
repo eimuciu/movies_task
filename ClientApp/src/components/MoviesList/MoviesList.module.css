@@ -1,5 +1,5 @@
 .resultsBox {
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .iconsBox {

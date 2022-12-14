@@ -1,5 +1,5 @@
 import React, { useContext, createContext, useReducer, useEffect } from 'react';
-import { getMovies } from '../api/data';
+import { getMoviesFetch } from '../api/data';
 
 const DataContext = createContext({});
 
@@ -12,6 +12,13 @@ export function reducer(state, action) {
         ...state,
         data: action.payload.data,
       };
+    case 'UPDATE_MOVIES':
+      return {
+        ...state,
+        data: state.data.map((sMov) =>
+          sMov.id === action.payload.data.id ? action.payload.data : sMov,
+        ),
+      };
 
     default:
       return state;
@@ -23,7 +30,7 @@ function DataProvider({ children }) {
 
   useEffect(() => {
     const downdata = async () => {
-      const dataresp = await getMovies('lego', 1);
+      const dataresp = await getMoviesFetch('lego', 1);
       dispatch({
         type: 'SET_MOVIES',
         payload: { data: dataresp },
